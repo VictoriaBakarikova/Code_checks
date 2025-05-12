@@ -32,5 +32,10 @@ jobs:
       - name: Run flake8
         run: flake8 --max-line-length=150 .
 
-      - name: Run mypy
-        run: mypy .
+      - name: Run mypy (skip if no Python files)
+        run: |
+          if find . -name "*.py" | grep -q .; then
+            mypy .
+          else
+            echo "No Python files found, skipping mypy check."
+          fi
