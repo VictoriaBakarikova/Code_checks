@@ -8,31 +8,28 @@ on:
 jobs:
   lint:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Get changed files
-        id: changed-files
-        uses: tj-actions/changed-files@v35
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
 
       - name: Install dependencies
         run: |
-          pip install black isort flake8 mypy
+          python -m pip install --upgrade pip
+          pip install black flake8 mypy isort
 
-      - name: Run black
-        run: black ${{ steps.changed-files.outputs.all_changed_files }}
+      - name: Run Black
+        run: black --extend-ignore E1 .
 
+      - name: Run Isort
+        run: isort .
 
-      - name: Run isort
-        run: isort --check-only ${{ steps.changed-files.outputs.all_changed_files }}
+      - name: Run Flake8
+        run: flake8 --max-line-length 150 .
 
-      - name: Run flake8
-        run: flake8 --max-line-length=150 ${{ steps.changed-files.outputs.all_changed_files }}
-
-      - name: Clear cache
-        run: rm -rf .mypy_cache
-
-      - name: Run mypy
-        run: mypy ${{ steps.changed-files.outputs.all_changed_files }}
+      - name: Run Mypy
+        run: mypy .
