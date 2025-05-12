@@ -34,8 +34,4 @@ jobs:
 
       - name: Run mypy (skip if no Python files)
         run: |
-          if find . -name "*.py" | grep -q .; then
-            mypy .
-          else
-            echo "No Python files found, skipping mypy check."
-          fi
+          python -c "import pathlib; exit(0) if any(pathlib.Path('.').rglob('*.py')) else exit(1)" || echo "No Python files found, skipping mypy check."
